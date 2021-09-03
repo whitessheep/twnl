@@ -18,6 +18,10 @@ class Channel: noncopyable
 public:
 	typedef std::function<void()> EventCallback;
 	typedef std::function<void(Timestamp)> ReadEventCallback;
+	enum mode {
+		LT,
+		ET
+	};
 
 	Channel(EventLoop* loop, int fd);
 	~Channel();
@@ -36,8 +40,6 @@ public:
 		closeCallback_ = cb;
 	}	
 	
-	void tie (const std::shared_ptr<void>&);     //保留一份Channel，防止在handleEvents时析构
-
 	int fd() const { return fd_; }
 	int events() const { return events_;}
 	void set_revents(int revt) { revents_ = revt; }
@@ -58,22 +60,22 @@ public:
 	string reventsToString() const;
 	string eventsToString() const;
 
-	void doNotLogHup() { tied_ = false;}
-
 	EventLoop* ownerloop() { return loop_; }
 
 	void remove();
 
+	static void  initDefaultEvent(mode m);
+	static bool isET() { return mode_ == ET;}
 private:
 	static string eventsToString(int fd, int ev);
 
 	void update();
 
-	void handleEventWithGuard(Timestamp receiveTime);
 
-	static const int kNoneEvent;
-	static const int kReadEvent;
-	static const int kWriteEvent;
+	static mode mode_;
+	static int kNoneEvent;
+	static int kReadEvent;
+	static int kWriteEvent;
 	
 	EventLoop* loop_;
 	const int fd_;
@@ -82,8 +84,6 @@ private:
 	int index_;
 	bool logHup_;              //记录挂起事件
 	 
-	std::weak_ptr<void> tie_;
-	bool tied_;
 	bool eventHanding_;
 	bool addedToLoop_;
 

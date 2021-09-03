@@ -196,7 +196,13 @@ void TcpConnection::sendInLoop(const void* data, size_t len) {
 
 void TcpConnection::handleRead(Timestamp receiveTime) {
 	int savedErrno = 0;
-	ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
+	ssize_t n;
+	if (channel_->isET()) {
+		n = inputBuffer_.readFdET(channel_->fd(), &savedErrno);
+	}
+	else {
+		n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
+	}
 	if (n > 0) {
 		messageCallback_(shared_from_this(), &inputBuffer_, receiveTime);
 	}
@@ -213,9 +219,15 @@ void TcpConnection::handleRead(Timestamp receiveTime) {
 void TcpConnection::handleWrite() {
 	loop_->assertInLoopThread();
 	if (channel_->isWriting()) {
-		ssize_t n = ::write(channel_->fd(), outputBuffer_.peek(), outputBuffer_.readableBytes());
+		int savedErrno = 0;
+		ssize_t n;
+		if (channel_->isET()) {
+			n = outputBuffer_.writeFdET(channel_->fd(), &savedErrno);
+		}
+		else {
+			n = outputBuffer_.writeFd(channel_->fd(), &savedErrno);
+		}
 		if (n > 0) {
-			outputBuffer_.retrieve(n);
 			if (outputBuffer_.readableBytes() == 0) {
 				channel_->disableWriting();         //写完毕
 				if (writeCompleteCallback_) {
@@ -248,7 +260,6 @@ void TcpConnection::handleClose() {
 
 	TcpConnectionPtr guardThis(shared_from_this());
 	connectionCallback_(guardThis);
-	// must be the last line
 	closeCallback_(guardThis);
 
 }
@@ -267,7 +278,6 @@ void TcpConnection::connectDestroyed() {
 		connectionCallback_(shared_from_this());
 	}
 	channel_->remove();
-	// loop_->removeChannel(boost::get_pointer(channel_));
 }
 
 

@@ -135,6 +135,10 @@ namespace twnl
 		}
 
 		ssize_t readFd(int fd, int* savedErrno);
+		ssize_t readFdET(int fd, int* savedErrno);
+		ssize_t writeFd(int fd, int* savedErrno);
+		ssize_t writeFdET(int fd, int* savedErrno);
+		
 
 	private:
 		char* begin() {
