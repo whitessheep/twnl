@@ -30,7 +30,7 @@ namespace twnl
 		std::string toIp() const;
 		uint16_t toPort() const;
 
-		const struct sockaddr* getSockAddr() const { return (sockaddr*)(&addr6_); }
+		const struct sockaddr* getSockAddr() const { return reinterpret_cast<const sockaddr*>(&addr6_); }
 		void setSockAddrInet6(const struct sockaddr_in6& addr6) { addr6_ = addr6; }
 
 		uint32_t ipNetEndian() const;

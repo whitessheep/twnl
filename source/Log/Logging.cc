@@ -6,7 +6,7 @@
 #include <sys/time.h>
 
 #include "Logging.h"
-#include "Timestamp.h"
+#include "../Timestamp.h"
 
 using namespace twnl;
 

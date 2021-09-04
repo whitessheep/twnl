@@ -7,8 +7,8 @@
 #include <poll.h>
 
 #include "PollPoller.h"
-#include "Channel.h"
-#include "Log/Logging.h"
+#include "../Channel.h"
+#include "../Log/Logging.h"
 
 using namespace twnl;
 

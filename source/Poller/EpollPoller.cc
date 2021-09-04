@@ -9,8 +9,8 @@
 #include <string.h>
 
 #include "EpollPoller.h"
-#include "Log/Logging.h"
-#include  "Channel.h"
+#include "../Log/Logging.h"
+#include "../Channel.h"
 using namespace twnl;
 namespace
 {
@@ -37,7 +37,7 @@ EpollPoller::~EpollPoller() {
 Timestamp EpollPoller::poll(int timeoutMs, ChannelList* activeChannels) {
 	Poller::assertInLoopThread();
 	int numEvents = ::epoll_wait(epollfd_, &*events_.begin(),
-		static_cast<size_t>(events_.size()),
+		static_cast<int>(events_.size()),
 		timeoutMs);
 	int savedErrno = errno;
 	Timestamp now(clock::now());
