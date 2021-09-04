@@ -28,8 +28,8 @@ set(HEADERS
         Callbacks.h
         Channel.h
         Poller.h
-        Poller/EPoller.h
-        Poller/PollPoller.h
+        Poller/EpollPoller.h 
+        Poller/PollPoller.h 
         EventLoop.h
         EventLoopThread.h
         EventLoopThreadPool.h
