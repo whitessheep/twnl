@@ -68,7 +68,7 @@ int sockets::createNonblockingOrDie(sa_family_t family)
 	int sockfd = ::socket(family, SOCK_STREAM, IPPROTO_TCP);
 	if (sockfd < 0)
 	{
-		// LOG_SYSFATAL << "sockets::createNonblockingOrDie";
+		LOG_FATAL << "sockets::createNonblockingOrDie";
 	}
 
 	setNonBlockAndCloseOnExec(sockfd);
@@ -76,7 +76,7 @@ int sockets::createNonblockingOrDie(sa_family_t family)
 	int sockfd = ::socket(family, SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC, IPPROTO_TCP);
 	if (sockfd < 0)
 	{
-		// LOG_SYSFATAL << "sockets::createNonblockingOrDie";
+		LOG_FATAL << "sockets::createNonblockingOrDie";
 	}
 #endif
 	return sockfd;
@@ -87,7 +87,7 @@ void sockets::bindOrDie(int sockfd, const struct sockaddr* addr)
 	int ret = ::bind(sockfd, addr, static_cast<socklen_t>(sizeof(struct sockaddr_in6)));
 	if (ret < 0)
 	{
-		// LOG_SYSFATAL << "sockets::bindOrDie";
+		LOG_FATAL << "sockets::bindOrDie";
 	}
 }
 
@@ -287,5 +287,5 @@ bool sockets::isSelfConnect(int sockfd)
 	{
 		return false;
 	}
-}  //namespace
+}  
 
