@@ -18,7 +18,6 @@ using namespace twnl;
 TcpServer::TcpServer(EventLoop* loop,
 	const InetAddress& listenAddr,
 	const string& nameArg,
-	EventMode mode,
 	Option option)
 	: loop_(loop),
 	name_(listenAddr.toIpPort()),
@@ -27,7 +26,6 @@ TcpServer::TcpServer(EventLoop* loop,
 	started_(false),
 	nextConnId_(1)
 {
-	Channel::initDefaultEvent(mode == LT ? Channel::LT : Channel::ET);
 	acceptor_->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, _1, _2));
 }
 

@@ -29,16 +29,18 @@ public:
 
 IgnoreSigPipe initobj;
 
-EventLoop::EventLoop() :
+EventLoop::EventLoop(Mode mode, EpollMode emode) :
 	looping_(false),
 	quit_(false),
 	callingPendingFunctors_(false),
 	threadId_(std::this_thread::get_id()),
-	poller_(Poller::newDefaultPoller(this)),
+	poller_(Poller::newDefaultPoller(this, mode)),
 	timerQueue_(this),
 	wakeupFd_(createEventfd()),
 	wakeupChannel_(new Channel(this, wakeupFd_))
 {
+    if (mode == EPOLL)
+        Channel::initDefaultEvent(emode == LT ? Channel::LT : Channel::ET);
 	LOG_DEBUG << "EventLoop created" << this << " in thread " << threadId_;
 	if (t_loopInThisThread) {
 		LOG_FATAL << "Another EventLoop" << t_loopInThisThread

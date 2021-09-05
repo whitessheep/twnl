@@ -33,15 +33,10 @@ namespace twnl
 			kNoReusePort,
 			kReusePort,
 		};
-		enum EventMode {
-			LT,
-			ET,
-		};
 
 		TcpServer(EventLoop* loop,
 			const InetAddress& listenAddr,
 			const std::string& nameArg,
-			EventMode mode = LT,
 			Option option = kNoReusePort);
 		~TcpServer();
 

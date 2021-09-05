@@ -46,9 +46,9 @@ private:
 
 };
 int main(){
-	EventLoop loop;
+	EventLoop loop(EventLoop::EPOLL, EventLoop::LT);
 	InetAddress listenAddr(12345);
-	EchoServer server(&loop, listenAddr, "EchoServer");
+	EchoServer server(&loop, listenAddr, "EchoServer", TcpServer::kNoReusePort);
 	server.start();
 	loop.loop();
 }

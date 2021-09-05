@@ -26,8 +26,19 @@ class EPoller;
 
 class EventLoop: noncopyable {
 public:
+
+    enum Mode {
+        POLL,
+        EPOLL,
+    };
+
+    enum EpollMode {
+        LT,
+        ET,
+    };
+
 	typedef std::function<void()> Functor;
-	EventLoop();
+	EventLoop(Mode mode = EPOLL, EpollMode emode= LT);
 	~EventLoop();
 
 	void loop();  //开启事件循环，主逻辑， 主循环

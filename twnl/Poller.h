@@ -30,7 +30,7 @@ namespace twnl
 
 		virtual bool hasChannel(Channel* channel) const;
 
-		static Poller* newDefaultPoller(EventLoop* ownerLoop);
+		static Poller* newDefaultPoller(EventLoop* ownerLoop, bool Poll);
 
 		void assertInLoopThread() const
 		{

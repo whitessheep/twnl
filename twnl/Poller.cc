@@ -22,11 +22,11 @@ bool Poller::hasChannel(Channel* channel) const  {
 	return it != channels_.end() && it->second == channel;
 }
 
-Poller* Poller::newDefaultPoller(EventLoop* loop) {
-	if (::getenv("USE_POLL")) {
-		return new PollPoller(loop);
+Poller* Poller::newDefaultPoller(EventLoop* loop, bool EPoll) {
+	if (EPoll) {
+		return new EPollPoller(loop);
 	}
 	else {
-		return new EpollPoller(loop);
+		return new pollPoller(loop);
 	}
 }

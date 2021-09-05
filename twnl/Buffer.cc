@@ -49,7 +49,7 @@ ssize_t Buffer::readFdET(int fd, int* savedErrno) {
 	ssize_t n = 0;
 	while (true) {
 		ssize_t len = readFd(fd, savedErrno);
-		if (len < 0) {
+		if (len <= 0) {
 			if (*savedErrno == EAGAIN) {
 				break;
 			}
@@ -65,7 +65,7 @@ ssize_t Buffer::writeFdET(int fd, int* savedErrno) {
 	ssize_t n = 0;
 	while (true) {
 		ssize_t len = writeFd(fd, savedErrno);
-		if (len < 0) {
+		if (len <= 0) {
 			if (*savedErrno == EAGAIN) {
 				break;
 			}
