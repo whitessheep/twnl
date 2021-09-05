@@ -3,9 +3,9 @@
 //Description:
 #ifndef TWNL_TCPCLIENT_H
 #define TWNL_TCPCLIENT_H
+#include <mutex>
 
 #include "noncopyable.h"
-#include "thread/Mutex.h"
 #include "TcpConnection.h"
 
 namespace twnl
@@ -29,29 +29,23 @@ namespace twnl
 
 		TcpConnectionPtr connection() const
 		{
-			MutexLockGuard lock(mutex_);
+            std::lock_guard<std::mutex> lock(mutex_);
 			return connection_;
 		}
 
 		bool retry() const;   //负责断开重新连接
 		void enableRetry() { retry_ = true; }
 
-		/// Set connection callback.
-		/// Not thread safe.
 		void setConnectionCallback(const ConnectionCallback& cb)
 		{
 			connectionCallback_ = cb;
 		}
 
-		/// Set message callback.
-		/// Not thread safe.
 		void setMessageCallback(const MessageCallback& cb)
 		{
 			messageCallback_ = cb;
 		}
 
-		/// Set write complete callback.
-		/// Not thread safe.
 		void setWriteCompleteCallback(const WriteCompleteCallback& cb)
 		{
 			writeCompleteCallback_ = cb;
@@ -66,10 +60,10 @@ namespace twnl
 		ConnectionCallback connectionCallback_;
 		MessageCallback messageCallback_;
 		WriteCompleteCallback writeCompleteCallback_;
-		bool retry_;  c
+		bool retry_;  
 		bool connect_; 
 		int nextConnId_;
-		mutable MutexLock mutex_;
+        mutable std::mutex mutex_;     //mutable for TcpConnectionPtr::connection()
 		TcpConnectionPtr connection_; 
 	};
 

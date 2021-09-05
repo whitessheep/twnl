@@ -13,9 +13,9 @@ using namespace twnl;
 
 const int Connector::kMaxRetryDelayMs;
 
-Connector::Connector(EventLoop* loop, const InetAddress& serverAddr_) :
+Connector::Connector(EventLoop* loop, const InetAddress& serverAddr) :
 	loop_(loop),
-	serverAddr_(serverAddr_),
+	serverAddr_(serverAddr),
 	connect_(false),
 	state_(kDisconnected),
 	retryDelayMs_(kInitRetryDelayMs) {
@@ -24,7 +24,7 @@ Connector::Connector(EventLoop* loop, const InetAddress& serverAddr_) :
 
 Connector::~Connector() {
 	LOG_DEBUG << "ctor [" << this << "]";
-	loop_->cancel(timerId_);
+	loop_->cancelTimer(timer_);
 	assert(!channel_);
 }
 void Connector::start() {
@@ -45,7 +45,7 @@ void Connector::startInLoop() {
 
 void Connector::connect() {
 	int sockfd = sockets::createNonblockingOrDie(serverAddr_.family());
-	int ret = sockets::connect(sockfd, serverAddr_.getSockAddrInet());
+	int ret = sockets::connect(sockfd, serverAddr_.getSockAddr());
 	int savedErrno = (ret == 0) ? 0 : errno;
 	switch (savedErrno) {
 	case 0:
@@ -70,14 +70,13 @@ void Connector::connect() {
 	case EBADF:
 	case EFAULT:
 	case ENOTSOCK:
-		LOG_SYSERR << "connect error in Connector::startInLoop " << savedErrno;
+		LOG_WARN << "connect error in Connector::startInLoop " << savedErrno;
 		sockets::close(sockfd);
 		break;
 
 	default:
-		LOG_SYSERR << "Unexpected error in Connector::startInLoop " << savedErrno;
+		LOG_WARN << "Unexpected error in Connector::startInLoop " << savedErrno;
 		sockets::close(sockfd);
-		// connectErrorCallback_();
 		break;
 	}
 }
@@ -93,7 +92,7 @@ void Connector::restart() {
 //取消重新连接
 void Connector::stop() {
 	connect_ = false;
-	loop_->cancel(timerId_);
+	loop_->cancelTimer(timer_);
 }
 
 
@@ -109,7 +108,7 @@ void Connector::connecting(int sockfd) {
 //移除事件
 int  Connector::removeAndResetChannel() {
 	channel_->disableAll();
-	loop_->removeChannel(boost::get_pointer(channel_));
+	loop_->removeChannel(channel_.get());
 	int sockfd = channel_->fd();
 	loop_->queueInLoop(std::bind(&Connector::resetChannel, this));
 	return sockfd;
@@ -169,9 +168,9 @@ void Connector::retry(int sockfd) {
 	setState(kDisconnected);
 	if (connect_) {
 		LOG_INFO << "Connector::retry - Retry connection to "
-			<< serverAddr_.toHostPort() << " in "
+			<< serverAddr_.toIpPort() << " in "
 			<< retryDelayMs_ << " milliseconds. ";
-		timerId_ = loop_->runAfter(retryDelayMs_ / 1000.0, std::bind(&Connector::startInLoop, this));
+		timer_ = loop_->runAfter(Millisecond(retryDelayMs_), std::bind(&Connector::startInLoop, this));
 		retryDelayMs_ = std::min(retryDelayMs_ * 2, kMaxRetryDelayMs);
 
 	}

@@ -1,46 +1,54 @@
-//
-//7.4 		WhiteSheep
-//
-//Program:
-// 		简单的echo测试程序
-//
-//
-
-#include "source/TcpServer.h"
-#include "source/EventLoop.h"
-#include "source/InetAddress.h"
-#include "source/Log/Logging.h"
-
 #include <unistd.h>
+#include <string>
+
+#include "twnl/Log/Logging.h"
+#include "twnl/EventLoop.h"
+#include "twnl/TcpServer.h"
 
 using namespace twnl;
+using namespace std;
+class EchoServer
+{
+public:
 
-const size_t kHeaderLen = 3;
+	EchoServer(EventLoop* loop,
+			   const InetAddress& listenAddr,
+			   const std::string& name,
+               const int numThread = 1) 
+        : server_(loop, listenAddr, name){
+        server_.setConnectionCallback(std::bind(&EchoServer::onConnection, this, _1));
+        server_.setMessageCallback(std::bind(&EchoServer::onMessage, this, _1, _2, _3));
+        server_.setThreadNum(numThread);
+    }
 
-void onConnection(const TcpConnectionPtr& conn) {
-	LOG_INFO << "echo" << conn->localAddress().toIpPort() << " -> "
-			 << conn->peerAddress().toIpPort() << " is "
-			 << (conn->connected() ? "UP" : "DOWN");
-}
+	void start() {
+        server_.start();
+    }
 
-void onMessage(const TcpConnectionPtr& conn, 
-			   Buffer* buf,
-			   Timestamp receiveTime) {
-	string msg(buf->retrieveAllAsString());
-	LOG_INFO << conn->name() <<  " echo " << msg.size() << " bytes, "
-			 << "data received at ";
-	conn->send(msg);
-}
 
-int main() {
+private:
+
+	void onConnection(const TcpConnectionPtr& conn) {
+        LOG_INFO << "EchoServer - " << conn->peerAddress().toIpPort() << " -> "
+                 << conn->localAddress().toIpPort() << " is "
+                 << (conn->connected() ? "UP" : "DOWN");
+    }
+	void onMessage(const TcpConnectionPtr& conn,
+				   Buffer* buf,
+				   Timestamp time) {
+        std::string msg(buf->retrieveAllAsString());
+        LOG_INFO << conn->name() << " echo " << msg.size() << " bytes, "
+                 << "data received at "<< clock::toString(time);
+        conn->send(msg);
+    }
+
+	TcpServer server_;
+
+};
+int main(){
 	EventLoop loop;
-
-	InetAddress listenAddr(9999);
-	
-	TcpServer server(&loop, listenAddr, "echo");
-	server.setConnectionCallback(std::bind(&onConnection, _1));
-	server.setMessageCallback(std::bind(&onMessage, _1, _2, _3));
-	server.setThreadNum(4);
+	InetAddress listenAddr(12345);
+	EchoServer server(&loop, listenAddr, "EchoServer");
 	server.start();
 	loop.loop();
 }

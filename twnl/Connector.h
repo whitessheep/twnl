@@ -8,6 +8,7 @@
 
 #include "InetAddress.h"
 #include "noncopyable.h"
+#include "Timer.h"
 
 namespace twnl
 {
@@ -20,7 +21,7 @@ class Connector: noncopyable,
 public:
 	typedef std::function<void (int sockfd)> NewConnectionCallback;
 	
-	Connector(EventLoop* loop, const InetAddress& serverAddr_);
+	Connector(EventLoop* loop, const InetAddress& serverAddr);
 	~Connector();
 
 	void setNewConnectionCallback(const NewConnectionCallback& cb){
@@ -58,10 +59,9 @@ private:
 	std::unique_ptr<Channel> channel_;
 	NewConnectionCallback newConnectionCallback_;
 	int retryDelayMs_;
-	TimerId timerId_;
+    Timer* timer_;
 };
 
-typedef std::shared_ptr<Connector> ConnectorPtr;
 }
 
 #endif //TWNL_CONNECTOR_H

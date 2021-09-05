@@ -28,7 +28,7 @@ TcpServer::TcpServer(EventLoop* loop,
 	nextConnId_(1)
 {
 	Channel::initDefaultEvent(mode == LT ? Channel::LT : Channel::ET);
-	acceptor_->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, std::placeholders::_1, std::placeholders::_2));
+	acceptor_->setNewConnectionCallback(std::bind(&TcpServer::newConnection, this, _1, _2));
 }
 
 TcpServer::~TcpServer() {

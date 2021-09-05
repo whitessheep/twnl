@@ -86,7 +86,7 @@ Logger::Impl::Impl(LogLevel level, int savedErrno, const SourceFile& file, int l
 	line_(line),
 	basename_(file)
 {
-	stream_ << clock::now_string();
+	stream_ << clock::toString(clock::now());
 	stream_ << std::this_thread::get_id();
 	stream_ << T(LogLevelName[level], 6);
 	if (savedErrno != 0)

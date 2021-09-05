@@ -11,6 +11,8 @@ set(SOURCE_FILES
         SocketsOps.cc
         Channel.cc 
         Acceptor.cc 
+        Connector.cc
+        TcpClient.cc
         InetAddress.cc 
         TcpConnection.cc 
         TcpServer.cc 
@@ -36,6 +38,8 @@ set(HEADERS
         InetAddress.h
         Socket.h
         SocketsOps.h
+        Connector.h 
+        TcpClient.h
         noncopyable.h
         TcpConnection.h
         TcpServer.h

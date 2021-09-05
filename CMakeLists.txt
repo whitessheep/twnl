@@ -26,7 +26,7 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
 include_directories(${PROJECT_SOURCE_DIR})
 
-add_subdirectory(source)
+add_subdirectory(twnl)
 
 if(NOT CMAKE_BUILD_NO_EXAMPLES)
     add_subdirectory(example)

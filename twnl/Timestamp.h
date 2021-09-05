@@ -32,8 +32,7 @@ namespace twnl
 			return system_clock::now();
 		}
 
-		inline std::string now_string() {
-			Timestamp n = system_clock::now();
+		inline std::string toString(Timestamp n) {
 			std::time_t tt = system_clock::to_time_t(n);
 			char mbstr[100] = { 0 };
 			std::strftime(mbstr, sizeof(mbstr), "%Y%m%d %H:%M:%S", std::localtime(&tt));
