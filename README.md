@@ -24,7 +24,7 @@ $ ./build.sh install
 
 ## 使用
 
-一个基础的服务器示范
+* 一个基础的服务器示范
 
 ```c++
 	EventLoop loop(EventLoop::EPOLL, EventLoop::ET);                                 //设置事件循环的模式
@@ -34,8 +34,8 @@ $ ./build.sh install
 	loop.loop();                                                                     //开启事件循环处理事件
 ```
 
-TcpServer，负责最基础的服务器初始化工作
-用户可以通过往TcpServer中注册回调在函数中处理事件以及设置开启的线程总数
+* TcpServer，负责最基础的服务器初始化工作
+* 用户可以通过往TcpServer中注册回调在函数中处理事件以及设置开启的线程总数
 ```c++
 class EchoServer
 {
@@ -60,9 +60,10 @@ private:
 };
 ```
 
+待续
 
-##致谢
-	《linux多线程服务端编程》陈硕
+## 致谢
+	《linux多线程服务端编程》 陈硕
 
 
 
