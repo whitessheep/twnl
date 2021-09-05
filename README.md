@@ -19,7 +19,7 @@ $ ./build.sh install
 
 ## 环境
 * os: centos 7
-* complier: gcc 10.2.1
+* compiler: gcc 10.2.1
 
 
 ## 使用
