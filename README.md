@@ -42,9 +42,9 @@ class EchoServer
 public:
 
 	EchoServer(EventLoop* loop,
-			   const InetAddress& listenAddr,
-			   const std::string& name,
-               const int numThread = 1) 
+		  const InetAddress& listenAddr,
+		  const std::string& name,
+                  const int numThread = 1) 
         : server_(loop, listenAddr, name){
         server_.setConnectionCallback(std::bind(&EchoServer::onConnection, this, _1));
         server_.setMessageCallback(std::bind(&EchoServer::onMessage, this, _1, _2, _3));
